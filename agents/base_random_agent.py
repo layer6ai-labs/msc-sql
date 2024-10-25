@@ -63,7 +63,7 @@ class BaseBirdAgent(BaseRandomAgentWithIndex):
        
         # user prompt constructs the prompt that will be used as the user question when fine-tuning the LLM
         # this is different from the variable `prompt` above which is the prompt used for generating the instructions from the LLM.
-        user_prompt = constants.bird_generation_user_prompt_ilan(
+        user_prompt = constants.bird_generation_user_prompt(
             message_dict['query'],
             message_dict['evidence'],
             generated_schema
@@ -116,7 +116,7 @@ class BaseBirdFromTablePredAgent(BaseRandomAgentWithIndex):
        
         # user prompt constructs the prompt that will be used as the user question when fine-tuning the LLM
         # this is different from the variable `prompt` above which is the prompt used for generating the instructions from the LLM.
-        user_prompt = constants.bird_generation_user_prompt_ilan(
+        user_prompt = constants.bird_generation_user_prompt(
             message_dict['query'],
             message_dict['evidence'],
             generated_schema
@@ -167,7 +167,7 @@ class BaseSpiderAgent(BaseRandomAgentWithIndex):
        
         # user prompt constructs the prompt that will be used as the user question when fine-tuning the LLM
         # this is different from the variable `prompt` above which is the prompt used for generating the instructions from the LLM.
-        user_prompt = constants.spider_generation_user_prompt_ilan(
+        user_prompt = constants.spider_generation_user_prompt(
             message_dict['query'],
             generated_schema
         )
@@ -219,7 +219,7 @@ class BaseSpiderFromTablePredAgent(BaseRandomAgentWithIndex):
        
         # user prompt constructs the prompt that will be used as the user question when fine-tuning the LLM
         # this is different from the variable `prompt` above which is the prompt used for generating the instructions from the LLM.
-        user_prompt = constants.spider_generation_user_prompt_ilan(
+        user_prompt = constants.spider_generation_user_prompt(
             message_dict['query'],
             generated_schema
         )

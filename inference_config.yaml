@@ -1,0 +1,16 @@
+
+stage2_models:
+  - model_name: "/home/ilan/sqllm/mistral_model_april21_merged"
+    peft_model: false
+    intermediate_jsonl_results_file: "output_mistral_report.jsonl"
+    final_json_results_file: "output_mistral_report.json"
+  
+  - model_name: "/home/ilan/sqllm/gemma9b_july25_med/"
+    peft_model: true
+    intermediate_jsonl_results_file: "output_gemma_report.jsonl"
+    final_json_results_file: "output_gemma_report.json"
+  
+  - model_name: "/home/ilan/sqllm/llama3_with_archer_july5_high_all_datasets"
+    peft_model: true
+    intermediate_jsonl_results_file: "output_llama_report.jsonl"
+    final_json_results_file: "output_llama_report.json"

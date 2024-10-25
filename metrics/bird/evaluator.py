@@ -16,7 +16,7 @@ class BirdEvaluator:
     def result_callback(self, result):
         self.exec_result.append(result.result())
 
-    def execute_sql(self, sql, db_path):
+    def execute_sql(self, sql, db_path, include_cols=False):
         """
             Connects to a db and executes sql
         """
@@ -26,6 +26,11 @@ class BirdEvaluator:
         cursor = conn.cursor()
         cursor.execute(sql)
         results = cursor.fetchall()
+
+        if include_cols:
+            column_names = [description[0] for description in cursor.description]
+            return results, column_names
+
         return results
 
     def execute_model(self, sql, db_place, difficulty, idx):
@@ -49,6 +54,29 @@ class BirdEvaluator:
 
         result = {'sql_idx': idx, 'results': result, 'sql': sql, 'difficulty': difficulty}
         return result
+
+    def execute_model_with_cols(self, sql, db_place, difficulty, idx):
+        """
+            Connects to a db and executes sql and handles errors
+            Returns: 
+                {
+                    'sql_idx': idx,
+                    'results': ...
+                }
+        """
+        try:
+            result, col_names = func_timeout(30.0, self.execute_sql, args=(sql, db_place, True))
+        except KeyboardInterrupt:
+            sys.exit(0)
+        except FunctionTimedOut:
+            result = ['timeout']
+            col_names = []
+        except Exception as e:
+            # print('exception: {}'.format(e))
+            result = ['sql_error', e]  # possibly len(query) > 512 or not executable
+            col_names = []
+
+        return result, col_names
 
     def run_sqls_parallel(self, sqls_with_path, num_cpus=1):
         with concurrent.futures.ThreadPoolExecutor(max_workers=num_cpus) as executor:

@@ -5,7 +5,7 @@ class DATASETS(Enum):
     SPIDER_DATASET = "spider"
 
 
-bird_generation_user_prompt_ilan = lambda query, evidence, schema: \
+bird_generation_user_prompt = lambda query, evidence, schema: \
 f"""You are given an 'SQL Question', 'Evidence' which is information that you need to use to solve the question, 'DB schema' containing the database schema.
 Think step by step and solve the question by coming up with the correct SQL statement that solves the question.
 
@@ -21,6 +21,9 @@ Evidence: {evidence}
 DB schema: {schema}
 
 Reminder of the SQL Question: {query}
+
+
+
 
 """
 
@@ -40,7 +43,7 @@ SQL statement: {sql}
 """
 
 
-spider_generation_user_prompt_ilan = lambda query, schema: \
+spider_generation_user_prompt = lambda query, schema: \
 f"""You are given an 'SQL Question', 'Evidence' which is information that you need to use to solve the question, 'DB schema' containing the database schema.
 Think step by step and solve the question by coming up with the correct SQL statement that solves the question.
 
@@ -73,7 +76,40 @@ DB schema: {schema}
 SQL statement: {sql}
 """
 
-stage3_preamble = "You are an SQL, database expert. A previous user was given a task of writing a SQL query given a question prompt. The user wrote 2 possible SQL queries. One is correct and one is wrong given the question. You task is to use the question and your expertise to decide which one is correct. Here is the question prompt: \n\n"
-
 stage3_postamble = lambda q1, q2, r1, r2: \
         f"\n\n The following are the two SQL queries written by the user along with the sample results they generated. One is correct and one is wrong. You need to decide which one is correct.\n\n1: {q1}\nResults of 1st SQL:\n{r1}\n\n2: {q2}\nResults of 2nd SQL:\n{r2}\n\nProvide the number of the right SQL:"
+
+stage3_preamble = """
+You are an SQL, database expert. A previous user was given a task of writing a SQL query given a question prompt. 
+The user wrote possible SQL queries. One is correct and one is wrong given the question. 
+You task is to use the question, results and your expertise to decide which one is correct. 
+
+Here is the question prompt: 
+
+"""
+
+stage3_post_2_sql =lambda q1, q2, result1, result2: \
+    f"""
+        The following are the SQL queries written by the user.
+        Only one is correct. You need to decide which one is correct.
+        
+        1){q1}
+        
+        With an output of:
+        
+        {result1}
+        
+        2){q2}
+
+        With an output of: 
+        
+        {result2}
+
+        Reminder:
+
+        SQL 1) {q1}
+        SQL 2) {q2}
+
+        Based on the SQL Query and resulting output, analyze the which is correct. Pay attention to the question and evidence, think step-by-step and reason through the SQL query and results.
+        Provide the number of the of the correct SQL:
+        """
