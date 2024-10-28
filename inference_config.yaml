@@ -1,5 +1,6 @@
+stage1_output_file: '/home/ilan/sqllm/dev_sept_13_rag_new_mistral1_with_comment.json'
 
-stage2_models:
+stage_2_models:
   - model_name: "/home/ilan/sqllm/mistral_model_april21_merged"
     peft_model: false
     intermediate_jsonl_results_file: "output_mistral_report.jsonl"
@@ -14,3 +15,16 @@ stage2_models:
     peft_model: true
     intermediate_jsonl_results_file: "output_llama_report.jsonl"
     final_json_results_file: "output_llama_report.json"
+
+stage_3_models:
+  - "/home/ilan/sqllm/stage3_mistralAUG22_CUDA1_fts_with_result_inputs/checkpoint-2400"
+  - "/home/ilan/sqllm/stage3_mistralAUG21_fts_with_result_inputs/checkpoint-2400"
+  - "/home/ilan/sqllm/stage3_mistralAUG22_CUDA0_fts_with_result_inputs/checkpoint-2400"
+
+
+results_output_file: "output_stage3.json"
+
+# If there is ground truth and you would like to get the full eval 
+results_output_with_eval: "output_stage3_with_eval.json"
+
+

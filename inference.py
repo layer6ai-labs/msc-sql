@@ -4,8 +4,10 @@ from models.embedding_base import DBEmbedder
 from sentence_transformers import SentenceTransformer
 
 import stage2_generate
+import stage3_workflow
 import yaml
-
+import os
+import run_eval
 
 def index_database(embedder, db_metadata, save_path):
     db_path = db_metadata['db_path']
@@ -30,14 +32,21 @@ class Inference:
         with open(config_file, "r") as file:
             config = yaml.safe_load(file)
 
-        self.stage2_models = config['stage2_models']
+        self.config = config
 
     def stage1(self, input_file) -> list[str]:
         pass
 
-    def stage2(self, stage1_output_file):
+    def stage2(self):
+
+        # Using the stage1 output file, run stage2 inference
+        stage1_output_file = self.config['stage1_output_file']
+        # Verify that the stage1 output file exists
+        if not os.path.exists(stage1_output_file):
+            raise FileNotFoundError(f"Stage 1 output file {stage1_output_file} not found")
+
         print("Running Stage 2 Inference")
-        for model in tqdm(self.stage2_models):
+        for model in tqdm(self.config['stage_2_models']):
             stage2_generate.stage_2_pipeline(
                 model_name=model['model_name'],
                 peft_model=model['peft_model'],
@@ -50,11 +59,15 @@ class Inference:
             )
 
 
-    def stage3(self, stage2_output_files):
-        pass
+    def stage3(self):
+        print("Running Stage 3 Inference")
+        stage3_workflow.stage_3_pipeline(
+            stage_2_output_paths = [stage2['final_json_results_file'] for stage2 in self.config['stage_2_models']],
+            stage_3_model_paths=self.config['stage_3_models'],
+            output_file=self.config['results_output_file']
+        )
 
     def run(self, db_id, db_path, question, evidence):
-        
 
         db_metadata = get_db_metadata(db_id, db_path)
         
@@ -62,5 +75,11 @@ class Inference:
 if __name__ == "__main__":
     inference = Inference('inference_config.yaml')
     # inference.stage1(...)
-    inference.stage2('/home/ilan/sqllm/dev_sept_13_rag_new_mistral1_with_comment.json')
-    # inference.stage3(...)
+    # inference.stage2()
+    inference.stage3()
+
+    # Get results 
+    run_eval.eval(
+        inference.config['results_output_file'],
+        inference.config['results_output_with_eval']
+    )
