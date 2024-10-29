@@ -260,6 +260,15 @@ def extract_last_sql_block(text):
     return sql_blocks[-1]
 
 
+def extract_table_name_list(text):
+    try:
+        table_names = text.split(', ')
+    except:
+        # Wrong format
+        return None
+    # print(table_names, text)
+    return table_names
+
 def add_prefix(sql):
     if not sql.startswith('SELECT') and not sql.startswith('select'):
         sql = 'SELECT' + sql
