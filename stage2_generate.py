@@ -85,17 +85,11 @@ def generate_stage_2(
 
             db_path = batch["db_path"][i]
             user = batch["user"][i]
-            gt_instr = batch["assistant"][i]
             idx = batch["idx"][i]
             if "difficulty" in batch:
                 difficulty = batch["difficulty"][i]
             else:
                 difficulty = "default"
-
-            if "ground_truth" in batch:
-                gt_sql = batch["ground_truth"][i]
-            else:
-                gt_sql = ""
 
             answer = batch_of_answers[i]
 
@@ -103,10 +97,8 @@ def generate_stage_2(
                 {
                     "idx": idx,
                     "sql_pred": predicted_sql,
-                    "sql_gt": gt_sql,
                     "question_prompt": user,
                     "gen_answer": answer,
-                    "gt_answer": gt_instr,
                     "db_id": batch["db_id"][i],
                     "db_path": db_path,
                     "difficulty": difficulty,

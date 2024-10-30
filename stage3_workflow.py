@@ -20,8 +20,6 @@ class PredictionResult:
         stage2_file2,
         stage2_predicted_value,
         stage3_predicted_value,
-        stage2_ground_truth,
-        stage3_ground_truth,
         difficulty,
         db_path,
         db_id,
@@ -32,8 +30,6 @@ class PredictionResult:
         self.stage2_file2 = stage2_file2
         self.stage2_predicted_value = stage2_predicted_value
         self.stage3_predicted_value = stage3_predicted_value
-        self.stage2_ground_truth = stage2_ground_truth
-        self.stage3_ground_truth = stage3_ground_truth
         self.difficulty = difficulty
         self.db_path = db_path
         self.db_id = db_id
@@ -46,8 +42,6 @@ class PredictionResult:
         stage2_file2: {self.stage2_file2}
         stage2_predicted_value: {self.stage2_predicted_value}
         stage3_predicted_value: {self.stage3_predicted_value}
-        stage2_ground_truth: {self.stage2_ground_truth}
-        stage3_ground_truth: {self.stage3_ground_truth}
         difficulty: {self.difficulty}
         db_path: {self.db_path}
         db_id: {self.db_id}
@@ -65,8 +59,6 @@ class Stage3AgentManager:
         stage2_file2,
         stage2_predicted_value,
         stage3_predicted_value,
-        stage2_ground_truth,
-        stage3_ground_truth,
         difficulty,
         db_path,
         db_id,
@@ -83,8 +75,6 @@ class Stage3AgentManager:
                 stage2_file2,
                 stage2_predicted_value,
                 stage3_predicted_value,
-                stage2_ground_truth,
-                stage3_ground_truth,
                 difficulty,
                 db_path,
                 db_id,
@@ -94,7 +84,7 @@ class Stage3AgentManager:
     def get_results_file(self):
         # go through each idx and write the results to a file only including the top voted model
         # For each idx, get the sql_pred of the model with the most votes
-        # and keep all idx, stage3_predicted_value, ground_truth, difficulty, db_path
+        # and keep all idx, stage3_predicted_value, difficulty, db_path
         # Correctness is irrelevant here
         results = []
         for idx, predictions in self.predictions.items():
@@ -118,7 +108,6 @@ class Stage3AgentManager:
                 {
                     "idx": idx,
                     "sql_pred": max_votes_stage2_option,
-                    "sql_gt": predictions[0].stage2_ground_truth,
                     "difficulty": predictions[0].difficulty,
                     "db_path": predictions[0].db_path,
                 }
@@ -203,11 +192,9 @@ def eval_two_files(
                 print("Output is incorectly formatted. Choosing random stage 3")
                 predicted_stage3 = random.choice(["1", "2"])
 
-            gt_sql = batch["ground_truth"][i]
             idx = batch["idx"][i]
             db_path = batch["db_path"][i]
             user = batch["user"][i]
-            gt_instr = batch["assistant"][i]
             if "difficulty" in batch:
                 difficulty = batch["difficulty"][i]
             else:
@@ -224,12 +211,9 @@ def eval_two_files(
                 {
                     "idx": idx,
                     "sql_pred": stage2_chosen, 
-                    "sql_gt": batch["sql_gt"][i],
                     "stage3_pred": predicted_stage3,
-                    "stage3_gt": gt_sql,
                     "question_prompt": user,
                     "gen_answer": answer,
-                    "gt_answer": gt_instr,
                     "db_id": batch["db_id"][i],
                     "db_path": db_path,
                     "difficulty": difficulty,
@@ -331,8 +315,6 @@ def eval_all_files_one_model(
                     pair[1],
                     predictions["sql_pred"],
                     predictions["stage3_pred"],
-                    predictions["sql_gt"],
-                    predictions["stage3_gt"],
                     predictions["difficulty"],
                     predictions["db_path"],
                     predictions["db_id"],
@@ -365,13 +347,12 @@ def stage_3_pipeline(
         for record in res:
             idx = record["idx"]
 
-            # Add the record to the full results but only keep db_path, difficulty, and sql_pred, sql_gt, idx, db_id
+            # Add the record to the full results but only keep db_path, difficulty, and sql_pred, idx, db_id
             if idx not in stage2_full_res:
                 stage2_full_res[idx] = {}
                 stage2_full_res[idx]["db_path"] = record["db_path"]
                 stage2_full_res[idx]["difficulty"] = record["difficulty"]
                 stage2_full_res[idx]["sql_pred"] = record["sql_pred"]
-                stage2_full_res[idx]["sql_gt"] = record["sql_gt"]
                 stage2_full_res[idx]["idx"] = record["idx"]
                 stage2_full_res[idx]["db_id"] = record["db_id"]
                 stage2_full_res[idx]["source"] = "stage2"

@@ -102,7 +102,7 @@ class ChatDatasetStage3From2Files(DatasetBase):
             if b['idx'] not in required_idxs and (b['sql_pred'][0] == b['sql_pred'][1]):
                 continue
             else:
-                dataset.append(add_stage3_sample(b, b['sql_pred'], b['eval_result'], results=b['result'], id=b['idx']))
+                dataset.append(add_stage3_sample(b, b['sql_pred'], results=b['result'], id=b['idx']))
 
         return dataset
     
@@ -125,7 +125,6 @@ class ChatDatasetStage3From2Files(DatasetBase):
                 continue
             else:
                 d1['sql_pred'] = [d1['sql_pred'], ds2_map[d1['idx']]['sql_pred']]
-                d1['eval_result'] = [d1['eval_result'],ds2_map[d1['idx']]['eval_result'] ]
                 d1['result'] = [d1['result'], ds2_map[d1['idx']]['result'] ]
 
         return ds1
@@ -142,10 +141,8 @@ def load_single_dataset(ds_path, dataset_name, percent, subsample_by_difficulty)
         'idx': f"{dataset_name}_{b['idx']:05}",
         'db_id': b['db_id'],
         'db_path': b['db_info']['db_path'],
-        'conversations': format_as_single_chat_template(user=b['gen']['user'], assistant=f"```sql\n{b['ground_truth']}```"),
         'user': b['gen']['user'],
         'assistant': b['gen']['assistant'],
-        'ground_truth': b['ground_truth'],
         'difficulty': b['difficulty'] if 'difficulty' in b else "default",
     } for b in ds]
 
@@ -159,7 +156,7 @@ def load_single_dataset(ds_path, dataset_name, percent, subsample_by_difficulty)
     return ds
 
 
-def add_stage3_sample(b, predictions, eval_results, results=None, id=None):
+def add_stage3_sample(b, predictions, results=None, id=None):
 
     prompt = ""
 
@@ -175,47 +172,14 @@ def add_stage3_sample(b, predictions, eval_results, results=None, id=None):
         print("skipping")
         return None
     
-    #TODO remove all eval_results stuff
-    
-    # answer is where 100.0 is in the eval_results
-    if 100.0 not in eval_results:
-        answer = -1
-    elif eval_results.count(100.0) > 1:
-        # Find the index of all the 100.0
-        answers = []
-        for i, e in enumerate(eval_results):
-            if e == 100.0:
-                answers.append(i+1)
-        answer = answers
-
-    else:
-        answer = eval_results.index(100.0) + 1
-
     assert prompt != "", "Prompt is empty"
-
-    if answer == 1:
-        answer = "1" #"Correct Answer is 1"
-    elif answer == 2:
-        answer = "2" #"Right SQL is 2"
-    elif answer == 3:
-        answer = "3" #"3 is the correct SQL"
-    elif isinstance(answer, list):
-        answer = [str(a) for a in answer]
-    elif answer == -1:
-        answer = "No correct SQL"
-    else:
-        print("Unknown answer")
 
     sample = {'idx': b['idx'] if id == None else id,
             'db_id': b['db_id'],
             'db_path': b['db_path'],
-            'conversations': format_as_single_chat_template(user=prompt, assistant=f"```sql\n{answer}```"),
             'user': prompt,                                                             
-            'assistant': str(answer),
-            'ground_truth': str(answer),
             'sql_stage2_results': results,
             'sql_pred': predictions,
-            'sql_gt': b['sql_gt'],
             'difficulty': b['difficulty'] if 'difficulty' in b else None,
         }
 
