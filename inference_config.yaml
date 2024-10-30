@@ -1,6 +1,7 @@
 stage1_input_file: 'schema_linking/bird_dev_table_selection_0910.json'
 stage1_temp_file: results/stage1/intermediate_report.jsonl
 stage1_output_file: 'schema_linking/stage1_output.json'
+stage2_input_file: 'output/stage2_rag_input.json'
 
 stage_2_models:
   - model_name: "/home/ilan/sqllm/mistral_model_april21_merged"

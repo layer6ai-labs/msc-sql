@@ -12,7 +12,7 @@ random.seed(10)
 np.random.seed(10)
 
 
-class BaseRandomAgentWithIndex:
+class BaseAgentWithIndex:
     def __init__(self, index_path):
         if not index_path:
             raise Exception("index_path cannot be empty")
@@ -26,7 +26,7 @@ class BaseRandomAgentWithIndex:
             self.db_embedder[db_id].load_index(self.index_path, db_id)
 
 
-class BaseBirdAgent(BaseRandomAgentWithIndex):
+class BaseBirdAgent(BaseAgentWithIndex):
     def __init__(self, index_path, extra):
         super().__init__(index_path)
         self.model = SentenceTransformer("Alibaba-NLP/gte-large-en-v1.5", trust_remote_code=True)
@@ -76,7 +76,7 @@ class BaseBirdAgent(BaseRandomAgentWithIndex):
         }
 
 
-class BaseBirdFromTablePredAgent(BaseRandomAgentWithIndex):
+class BaseBirdFromTablePredAgent(BaseAgentWithIndex):
     def __init__(self, index_path, table_pred_path='output/datasets/instruct_table_selection/report_mistral_table_selection_all_lienar_multipass.json'):
         super().__init__(index_path)
         self.model = SentenceTransformer("Alibaba-NLP/gte-large-en-v1.5", trust_remote_code=True)
@@ -129,7 +129,7 @@ class BaseBirdFromTablePredAgent(BaseRandomAgentWithIndex):
         }
 
 
-class BaseSpiderAgent(BaseRandomAgentWithIndex):
+class BaseSpiderAgent(BaseAgentWithIndex):
     def __init__(self, index_path, extra):
         super().__init__(index_path)
         self.model = SentenceTransformer("Alibaba-NLP/gte-large-en-v1.5", trust_remote_code=True)
@@ -179,7 +179,7 @@ class BaseSpiderAgent(BaseRandomAgentWithIndex):
         }
 
 
-class BaseSpiderFromTablePredAgent(BaseRandomAgentWithIndex):
+class BaseSpiderFromTablePredAgent(BaseAgentWithIndex):
     def __init__(self, index_path, table_pred_path='output/datasets/instruct_table_selection/report_spider2k_all_tables.json'):
         super().__init__(index_path)
         self.model = SentenceTransformer("Alibaba-NLP/gte-large-en-v1.5", trust_remote_code=True)
