@@ -151,6 +151,9 @@ def stage_2_pipeline(
         percent=eval_percent,
         subsample_by_difficulty=subsample_by_difficulty,
     )
+
+    print(f"Loaded {len(eval_ds)} samples for evaluation")
+
     with torch.no_grad():
         model_and_tok_cls = get_model_class(model_name)
         if peft_model:
@@ -168,14 +171,14 @@ def stage_2_pipeline(
                 model_name, quantization_config=bnb_config, training=False
             )
 
-            return generate_stage_2(
-                model_and_tok,
-                eval_ds,
-                eval_batch_size,
-                temperature=temperature,
-                intermediate_jsonl_results_file=intermediate_jsonl_results_file,
-                final_json_results_file=final_json_results_file,
-            )
+        return generate_stage_2(
+            model_and_tok,
+            eval_ds,
+            eval_batch_size,
+            temperature=temperature,
+            intermediate_jsonl_results_file=intermediate_jsonl_results_file,
+            final_json_results_file=final_json_results_file,
+        )
 
 
 # if __name__ == "__main__":
