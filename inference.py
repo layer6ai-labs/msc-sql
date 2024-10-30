@@ -3,6 +3,7 @@ from utils import load_json_file
 from models.embedding_base import DBEmbedder
 from sentence_transformers import SentenceTransformer
 
+import stage1_prediction
 import stage2_generate
 import stage3_workflow
 import yaml
@@ -34,9 +35,19 @@ class Inference:
 
         self.config = config
 
-    def stage1(self, input_file) -> list[str]:
-        pass
-
+    def stage1(self):
+        print('running stage1 pipeline')
+        stage1_prediction.stage_1_pipeline(
+                model_name="table_selection/mistral_7b_table_selection_0614_all_linear/", # "mistral_7b_schema_linking",
+                peft_model=True,
+                eval_ds_path=self.config['stage1_input_file'],
+                eval_batch_size=2,
+                dataset_name='bird',
+                eval_percent=0.005,
+                intermediate_jsonl_results_file=self.config['stage1_temp_file'],
+                final_json_results_file=self.config['stage1_output_file']
+            )
+        
     def stage2(self):
 
         # Using the stage1 output file, run stage2 inference
@@ -74,9 +85,9 @@ class Inference:
 
 if __name__ == "__main__":
     inference = Inference('inference_config.yaml')
-    # inference.stage1(...)
+    inference.stage1()
     # inference.stage2()
-    inference.stage3()
+    # inference.stage3()
 
     # Get results 
     run_eval.eval(
