@@ -1,7 +1,7 @@
 from tqdm import tqdm
 from utils import load_json_file
 from constants import DATASETS
-from dataset_gen import generate_instructions_for_model
+from dataset_gen import generate_instructions_for_model, generate_instruction_data_schema_linking
 from agents.base_index_agent import BaseBirdFromTablePredAgent, BaseSpiderFromTablePredAgent
 
 import stage1_prediction
@@ -26,11 +26,24 @@ class Inference:
         self.dataset = dataset
 
     def stage1(self):
-        print('running stage1 pipeline')
+        # generate stage1 input files from dev.json and metadata.json
+        generate_instruction_data_schema_linking(
+            dataset=self.dataset,
+            input_data=self.input_data,
+            db_metadata=self.db_metadata,
+            output_file=self.config['stage1_input_file'],
+        )
+        
+        print('Running stage1 pipeline')
+        stage1_input_file = self.config['stage1_input_file']
+        # Verify that the stage1 output file exists
+        if not os.path.exists(stage1_input_file):
+            raise FileNotFoundError(f"Stage 1 input file {stage1_input_file} not found")
+
         stage1_prediction.stage_1_pipeline(
-                model_name="table_selection/mistral_7b_table_selection_0614_all_linear/", # "mistral_7b_schema_linking",
+                model_name="table_selection/mistral_7b_schema_linking/", # "mistral_7b_schema_linking",
                 peft_model=True,
-                eval_ds_path=self.config['stage1_input_file'],
+                eval_ds_path=stage1_input_file,
                 eval_batch_size=2,
                 dataset_name='bird',
                 eval_percent=0.005,
@@ -88,7 +101,10 @@ class Inference:
         
 
 if __name__ == "__main__":
-    inference = Inference('inference_config.yaml')
+    inference = Inference('inference_config.yaml', 
+                          input_file="data/bird/dev/dev.json", 
+                          db_metadata_file="data/bird/dev/dev_metadata.json", 
+                          db_index_path='')
     inference.stage1()
     inference.stage2()
     inference.stage3()

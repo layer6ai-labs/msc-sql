@@ -76,6 +76,17 @@ Reminder of the SQL Question: {query}
 """
 
 
+spider_table_selection_generation_user_prompt = lambda query, schema: \
+f"""As an experienced and professional database administrator, your task is to analyze a user question and a database schema to provide relevant information. You are given an 'SQL Question', 'DB schema' containing the database schema.
+Think step by step. Identify and list all the relevant tables names from the DB schema based on the user question and database schema provided. Make sure you include all of them.
+
+SQL Question: {query}
+
+DB schema: {schema}
+
+"""
+
+
 spider_generation_agent_prompt = lambda query, schema, sql: \
 f"""You are given an SQL question, the database schema and the actual SQL statement. 
 Think step by step how to EXACLTY arrive at the given SQLITE statement. Make the final answer exactly the same as the given SQL statement.

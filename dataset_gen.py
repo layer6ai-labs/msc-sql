@@ -3,9 +3,12 @@ import json
 import argparse
 import multiprocessing
 from tqdm import tqdm
-from agents.base_random_agent import BaseBirdAgent, BaseSpiderAgent
+from agents.base_index_agent import BaseBirdAgent, BaseSpiderAgent
+import constants
 from constants import DATASETS
+from schema_utils import generate_schema_linking_schema
 from utils import load_json_file, load_jsonl_file
+from sql_metadata import Parser as SQLParser
 
 
 def init_bird_message(sql_sample: dict, db_metadata: dict) -> dict:                                                              
@@ -104,6 +107,42 @@ def generate_instructions_for_model(dataset, input_data, db_metadata, agent, out
         for _, data_item in enumerate(tqdm(dataset_items)):
             agent_result = agent.talk(data_item)
             data_item['gen'] = agent_result
+            print(json.dumps(data_item, ensure_ascii=False), file=fp, flush=True)
+    return dataset_items
+
+
+def generate_instruction_data_schema_linking(dataset, input_data, db_metadata, output_file):
+    dataset_items = construct_dataset(dataset, input_data, db_metadata)
+    os.makedirs(os.path.dirname(output_file), exist_ok=True)
+    with open(output_file, "a+", encoding="utf-8") as fp:
+        for _, data_item in enumerate(tqdm(dataset_items)):
+            message_dict = data_item
+            
+            generated_schema = generate_schema_linking_schema(message_dict['db_id'], message_dict['db_info'])
+
+            if dataset == DATASETS.BIRD_DATASET:
+                user_prompt = constants.bird_table_selection_generation_user_prompt(
+                    message_dict['query'],
+                    message_dict['evidence'],
+                    generated_schema
+                )
+            else:
+                user_prompt = constants.spider_table_selection_generation_user_prompt(
+                    message_dict['query'],
+                    generated_schema
+                )
+
+            # get ground truth
+            gt_sql = message_dict['ground_truth']
+            gt_tables_names = SQLParser(gt_sql).tables
+            gt_tables = ", ".join(gt_tables_names)
+
+            agent_result = {
+                'user': user_prompt,
+                'assistant': gt_tables 
+            }
+            data_item['gen'] = agent_result
+            data_item['ground_truth'] = gt_tables
             print(json.dumps(data_item, ensure_ascii=False), file=fp, flush=True)
     return dataset_items
 

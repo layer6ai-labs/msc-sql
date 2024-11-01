@@ -96,6 +96,49 @@ def generate_schema(db_id, metadata, embedder=None, question=None, evidence=None
     return schema
 
 
+def generate_schema_linking_schema(db_id, metadata, include_description=False):
+    """
+    Generate the schema linking schema based on the provided metadata.
+    Args:
+        metadata (dict): The metadata containing information about the tables and columns.
+        include_description (bool, optional): Whether to include column descriptions in the schema. Defaults to False.
+    Returns:
+        str: The generated schema linking schema.
+    """
+    schema = f"\nDatabase: {db_id}\n"
+    for table_name, table_data in metadata["table_info"].items():
+
+        schema += f"TABLE \"{table_name}\"\n(\n"
+        for col_name in table_data["col_names"]:
+            col_info = table_data["col_info"][col_name]
+            col_type = col_info["col_type"]
+            col_desc = col_info["description"]
+
+            schema += f" {col_name} {col_type}"
+            if col_info["is_pkey"]:
+                schema += " primary key"
+            schema += ","
+            if include_description and col_desc and type(col_desc) == str:
+                schema += f" -- {col_desc}"
+            schema += "\n"
+        pk_columns = table_data["primary_keys"]
+        if len(pk_columns) > 1:
+            schema += " primary key ("
+            schema += ", ".join(pk_columns)
+            schema += ")\n"
+        for foreign_key_relationship in metadata["foreign_key_relationships"]:
+            if table_name == foreign_key_relationship[0][0]:
+                column = foreign_key_relationship[0][1]
+                referenced_table = foreign_key_relationship[1][0]
+                referenced_column = foreign_key_relationship[1][1]
+                if len(referenced_column) > 0:
+                    schema += f" foreign key ({column}) references {referenced_table}({referenced_column})\n"
+                else:
+                    schema += f" foreign key ({column}) references {referenced_table}\n"
+        schema += ")\n\n"
+    return schema
+
+
 def format_col(col):
     if " " in col or "-" in col:
         return f'"{col}"'
