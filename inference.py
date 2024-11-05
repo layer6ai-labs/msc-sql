@@ -21,7 +21,7 @@ class Inference:
         self.config = config
         self.db_metadata = load_json_file(db_metadata_file)
         self.db_index_path = db_index_path
-        # this is either the dev.json or test.json with fields {qid, query, evidence, db_id}
+        # this is either the dev.json or test.json with fields {qid, question, evidence, db_id}
         self.input_data = load_json_file(input_file)
         self.dataset = dataset
 
