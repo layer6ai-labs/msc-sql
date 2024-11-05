@@ -1,0 +1,10 @@
+sql_metadata
+sentence_transformers
+torch                                                                                                                                                                                                                                                                                                                                                                             
+transformers
+trl
+datasets                                                                                                                                                                                                                                                                                                                                                                       
+peft                                                                                                                                                                                                                                                                                                                                                                           
+flash-attn
+bitsandbytes
+tensorboard
