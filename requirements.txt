@@ -1,10 +1,11 @@
 sql_metadata
 sentence_transformers
-torch                                                                                                                                                                                                                                                                                                                                                                             
 transformers
 trl
 datasets                                                                                                                                                                                                                                                                                                                                                                       
 peft                                                                                                                                                                                                                                                                                                                                                                           
-flash-attn
 bitsandbytes
 tensorboard
+accelerate
+python-dotenv
+func_timeout
