@@ -7,11 +7,11 @@ Coming Soon.
 
 * Download the BIRD dev/test dataset https://bird-bench.github.io/ and extract contents to a directory. 
 
-* Setup the Docker environment and mount the BIRD dataset directory to the container.
+* Setup the Docker environment and mount the BIRD dataset directory and model checkpoints to the container.
 
     ```sh
     docker build -t <image-name> .
-    docker run -v /bird_data:/path/to/bird_dataset <image-name>
+    docker run -v /bird_data:/path/to/bird_dataset -v /checkpoints:/path/to/model_checkpoints <image-name>
     ```
 
 * Process the dataset (produces a metadata json file): 
