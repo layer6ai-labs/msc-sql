@@ -81,10 +81,11 @@ def generate_stage_1(
         # )
 
         # multi-sampling
-        for idx_out in range(eval_batch_size):
+        bs_cur = len(batch_of_prompts)
+        for idx_out in range(bs_cur):
             # samples for a given query
             batch_of_answers = []
-            for idx_rep in range(pass_k):  
+            for idx_rep in range(pass_k):
                 batch_of_answers.append(
                     tokenizer.decode(
                         generate_ids[idx_out*pass_k + idx_rep][len(batch_of_tokens[idx_out]):], skip_special_tokens=True

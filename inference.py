@@ -41,15 +41,15 @@ class Inference:
             raise FileNotFoundError(f"Stage 1 input file {stage1_input_file} not found")
 
         stage1_prediction.stage_1_pipeline(
-                model_name="table_selection/mistral_7b_schema_linking/", # "mistral_7b_schema_linking",
-                peft_model=True,
-                eval_ds_path=stage1_input_file,
-                eval_batch_size=2,
-                dataset_name='bird',
-                eval_percent=0.005,
-                intermediate_jsonl_results_file=self.config['stage1_temp_file'],
-                final_json_results_file=self.config['stage1_output_file']
-            )
+            model_name="checkpoints/mistral_7b_schema_linking", # "mistral_7b_schema_linking",
+            peft_model=True,
+            eval_ds_path=stage1_input_file,
+            eval_batch_size=2,
+            dataset_name='bird',
+            eval_percent=0.05,
+            intermediate_jsonl_results_file=self.config['stage1_temp_file'],
+            final_json_results_file=self.config['stage1_output_file']
+        )
         
     def stage2(self):
 
@@ -95,22 +95,18 @@ class Inference:
             output_file=self.config['results_output_file']
         )
 
-    def run(self, db_id, db_path, question, evidence):
-
-        db_metadata = get_db_metadata(db_id, db_path)
-        
 
 if __name__ == "__main__":
     inference = Inference('inference_config.yaml', 
                           input_file="data/bird/dev/dev.json", 
                           db_metadata_file="data/bird/dev/dev_metadata.json", 
-                          db_index_path='')
+                          db_index_path='output/db_index/bird_dev_20240627')
     inference.stage1()
     inference.stage2()
     inference.stage3()
 
     # Get results 
-    run_eval.eval(
-        inference.config['results_output_file'],
-        inference.config['results_output_with_eval']
-    )
+    # run_eval.eval(
+    #     inference.config['results_output_file'],
+    #     inference.config['results_output_with_eval']
+    # )
