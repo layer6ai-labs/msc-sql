@@ -11,7 +11,7 @@ Coming Soon.
 
     ```sh
     docker build -t <image-name> .
-    docker run -v /bird_data:/path/to/bird_dataset -v /checkpoints:/path/to/model_checkpoints <image-name>
+    docker run -v /path/to/bird_dataset:/bird_data -v /path/to/model_checkpoints:/checkpoints <image-name>
     ```
 
 * Process the dataset (produces a metadata json file): 

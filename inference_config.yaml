@@ -4,25 +4,25 @@ stage1_output_file: 'schema_linking/stage1_output.json'
 stage2_input_file: 'output/stage2_rag_input.json'
 
 stage_2_models:
-  - model_name: "/home/ilan/sqllm/mistral_model_april21_merged"
+  - model_name: "/checkpoints/mistral_model_april21_merged"
     peft_model: false
     intermediate_jsonl_results_file: "output_mistral_report.jsonl"
     final_json_results_file: "output_mistral_report.json"
   
-  - model_name: "/home/ilan/sqllm/gemma9b_july25_med/"
+  - model_name: "/checkpoints/gemma9b_july25_med/"
     peft_model: true
     intermediate_jsonl_results_file: "output_gemma_report.jsonl"
     final_json_results_file: "output_gemma_report.json"
   
-  - model_name: "/home/ilan/sqllm/llama3_with_archer_july5_high_all_datasets"
+  - model_name: "/checkpoints/llama3_with_archer_july5_high_all_datasets"
     peft_model: true
     intermediate_jsonl_results_file: "output_llama_report.jsonl"
     final_json_results_file: "output_llama_report.json"
 
 stage_3_models:
-  - "/home/ilan/sqllm/stage3_mistralAUG22_CUDA1_fts_with_result_inputs/checkpoint-2400"
-  - "/home/ilan/sqllm/stage3_mistralAUG21_fts_with_result_inputs/checkpoint-2400"
-  - "/home/ilan/sqllm/stage3_mistralAUG22_CUDA0_fts_with_result_inputs/checkpoint-2400"
+  - "/checkpoints/stage3_mistralAUG22_CUDA1_fts_with_result_inputs/checkpoint-2400"
+  - "/checkpoints/stage3_mistralAUG21_fts_with_result_inputs/checkpoint-2400"
+  - "/checkpoints/stage3_mistralAUG22_CUDA0_fts_with_result_inputs/checkpoint-2400"
 
 
 results_output_file: "output_stage3.json"

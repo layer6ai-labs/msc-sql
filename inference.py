@@ -41,12 +41,12 @@ class Inference:
             raise FileNotFoundError(f"Stage 1 input file {stage1_input_file} not found")
 
         stage1_prediction.stage_1_pipeline(
-            model_name="checkpoints/mistral_7b_schema_linking", # "mistral_7b_schema_linking",
+            model_name="/checkpoints/mistral_7b_schema_linking", # "mistral_7b_schema_linking", # TODO make this an argument
             peft_model=True,
             eval_ds_path=stage1_input_file,
             eval_batch_size=2,
             dataset_name='bird',
-            eval_percent=0.05,
+            eval_percent=1,
             intermediate_jsonl_results_file=self.config['stage1_temp_file'],
             final_json_results_file=self.config['stage1_output_file']
         )
@@ -81,7 +81,7 @@ class Inference:
                 eval_ds_path=stage2_input_file,
                 eval_batch_size=1,
                 dataset_name='bird',
-                eval_percent=0.005,
+                eval_percent=1,
                 intermediate_jsonl_results_file=model['intermediate_jsonl_results_file'],
                 final_json_results_file=model['final_json_results_file']
             )
@@ -98,9 +98,9 @@ class Inference:
 
 if __name__ == "__main__":
     inference = Inference('inference_config.yaml', 
-                          input_file="data/bird/dev/dev.json", 
-                          db_metadata_file="data/bird/dev/dev_metadata.json", 
-                          db_index_path='output/db_index/bird_dev_20240627')
+                          input_file="/bird_data/bird/dev/dev.json",  # make this an argument
+                          db_metadata_file="/bird_data/bird/dev/dev_metadata.json",  # make this an argument
+                          db_index_path='output/db_index/bird_dev_20240627')    # make this an argument
     inference.stage1()
     inference.stage2()
     inference.stage3()
