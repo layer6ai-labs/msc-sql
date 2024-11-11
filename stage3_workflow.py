@@ -324,6 +324,7 @@ def stage_3_pipeline(
         stage_2_output_paths,
         stage_3_model_paths,
         output_file,
+        peft_model=True,
 ):
     """
     Executes the stage 3 pipeline for evaluating models.
@@ -383,7 +384,7 @@ def stage_3_pipeline(
             eval_all_files_one_model(
                 model,
                 stage_2_output_paths,
-                peft_model=True,
+                peft_model=peft_model,
                 stage3AgentManager=stage3AgentManager,
                 required_idxs=idxs_for_stage3,
             )
