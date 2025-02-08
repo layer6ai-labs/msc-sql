@@ -1,0 +1,11 @@
+sql_metadata
+sentence_transformers
+transformers
+trl
+datasets                                                                                                                                                                                                                                                                                                                                                                       
+peft                                                                                                                                                                                                                                                                                                                                                                           
+bitsandbytes
+tensorboard
+accelerate
+python-dotenv
+func_timeout
