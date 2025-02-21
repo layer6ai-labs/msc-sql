@@ -1,41 +1,50 @@
+<p align="center">
+<a href="https://layer6.ai/"><img src="https://github.com/layer6ai-labs/DropoutNet/blob/master/logs/logobox.jpg" width="180"></a>
+</p>
+
 # MSc-SQL: Multi-Sample Critiquing Small Language Models For Text-To-SQL Translation
 
-Coming Soon.
+This is the codebase accompanying the paper ["MSc-SQL: Multi-Sample Critiquing Small Language Models For Text-To-SQL Translation"](https://openreview.net/forum?id=cABADZlzrY), accepted to NAACL 2025.
 
-### Running the BIRD Benchmark
 
-* Download the BIRD dev/test dataset https://bird-bench.github.io/ and extract contents to a directory. 
+## Running the BIRD Benchmark
 
-* Setup the Docker environment and mount the BIRD dataset directory and model checkpoints to the container.
+### Environment Setup
+
+
+1. Download the BIRD dev/test dataset https://bird-bench.github.io/ and extract contents to a directory. 
+
+2. Setup the Docker environment and mount the BIRD dataset directory and model checkpoints to the container.
 
     ```sh
     docker build -t <image-name> .
     docker run -v /path/to/bird_dataset:/bird_data -v /path/to/model_checkpoints:/checkpoints <image-name>
     ```
 
+### Pre-Process Dataset
 
-
-* Process the dataset (produces a metadata json file): 
+1. Process the dataset (produces a metadata json file): 
     ```sh
-        python dataset_preprocess.py --dataset bird --db_prefix_path /bird_data/dev_20240627/dev_databases --tables_json_path /bird_data/dev_20240627/dev_tables.json --out_metadata_path /bird_data/dev_20240627/dev_metadata.json
+    python dataset_preprocess.py --dataset bird --db_prefix_path /bird_data/dev_20240627/dev_databases --tables_json_path /bird_data/dev_20240627/dev_tables.json --out_metadata_path /bird_data/dev_20240627/dev_metadata.json
     ```
 
-* Index the database
+2. Index the database
 
     ```sh
-        mkdir -p output/db_index
-        python index_db.py --metadata_path /bird_data/dev_20240627/dev_metadata.json --save_path output/db_index/bird_dev_20240627
+    mkdir -p output/db_index
+    python index_db.py --metadata_path /bird_data/dev_20240627/dev_metadata.json --save_path output/db_index/bird_dev_20240627
     ```
 
-* Run inference
-    ```sh
-    CUDA_VISIBLE_DEVICES=0 python inference.py
-    ```
+### Run Inference
+
+  ```sh
+  CUDA_VISIBLE_DEVICES=0 python inference.py
+  ```
 
 
-### Breakdown of the Arguments:
+#### Breakdown of the Arguments:
 
-#### **Stage 1**:
+##### **Stage 1**:
 - `--stage1_input_file`: Points to the Stage 1 input file.
   - Example: `schema_linking/bird_dev_table_selection_0910.json`
   
@@ -48,7 +57,7 @@ Coming Soon.
 - `--peft_model`: Boolean flag indicating whether to use a PEFT (Prompt-enhanced Fine-Tuning) model in Stage 1.
   - Example: `true`
 
-#### **Stage 2**:
+##### **Stage 2**:
 - `--stage2_input_file`: Points to the input file for Stage 2.
   - Example: `output/stage2_rag_input.json`
   
@@ -64,7 +73,7 @@ Coming Soon.
 - `--stage2_final_files`: List of paths to the final output files for each model in Stage 2.
   - Example: `"output_mistral_report.json" "output_gemma_report.json" "output_llama_report.json"`
 
-#### **Stage 3**:
+##### **Stage 3**:
 - `--stage3_models`: List of Stage 3 model paths to use.
   - Example: `"/checkpoints/stage3_mistralAUG22_CUDA1_fts_with_result_inputs/checkpoint-2400" "/checkpoints/stage3_mistralAUG21_fts_with_result_inputs/checkpoint-2400" "/checkpoints/stage3_mistralAUG22_CUDA0_fts_with_result_inputs/checkpoint-2400"`
   
@@ -74,7 +83,7 @@ Coming Soon.
 - `--results_output_file`: Points to the file where the final Stage 3 results will be stored.
   - Example: `output_stage3.json`
 
-#### Sample Run:
+##### Sample Run:
 
 ```sh
 python inference_pipeline.py \
@@ -97,3 +106,16 @@ python inference_pipeline.py \
   --stage3_peft_model true \
   --results_output_file "output_stage3.json"
 ```
+
+# Citing
+
+    @inproceedings{gorti2025mscsql,
+        title={MSc-SQL: Multi-Sample Critiquing Small Language Models For Text-To-SQL Translation}, 
+        author={Satya Krishna Gorti and Ilan Gofman and Zhaoyan Liu and Jiapeng Wu and Noël Vouitsis and Guangwei Yu and Jesse C. Cresswell and Rasa Hosseinzadeh},
+        booktitle={The 2025 Annual Conference of the Nations of the Americas Chapter of the ACL},
+        year={2025},
+        url={https://openreview.net/forum?id=cABADZlzrY}
+    }
+
+# License
+This data and code is licensed under the MIT License, copyright by Layer 6 AI.
