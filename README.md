@@ -4,7 +4,7 @@
 
 # MSc-SQL: Multi-Sample Critiquing Small Language Models For Text-To-SQL Translation
 
-This is the codebase accompanying the paper ["MSc-SQL: Multi-Sample Critiquing Small Language Models For Text-To-SQL Translation"](https://openreview.net/forum?id=cABADZlzrY), accepted to NAACL 2025.
+This is the codebase accompanying the paper ["MSc-SQL: Multi-Sample Critiquing Small Language Models For Text-To-SQL Translation"](https://arxiv.org/abs/2410.12916), accepted to NAACL 2025.
 
 
 ## Running the BIRD Benchmark
@@ -114,7 +114,7 @@ python inference_pipeline.py \
         author={Satya Krishna Gorti and Ilan Gofman and Zhaoyan Liu and Jiapeng Wu and Noël Vouitsis and Guangwei Yu and Jesse C. Cresswell and Rasa Hosseinzadeh},
         booktitle={The 2025 Annual Conference of the Nations of the Americas Chapter of the ACL},
         year={2025},
-        url={https://openreview.net/forum?id=cABADZlzrY}
+        url={https://arxiv.org/abs/2410.12916}
     }
 
 # License
